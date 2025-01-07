@@ -27,10 +27,10 @@ const Header = () => {
 
         </div>
 
-        <div className='absolute right-8 top-8 flex gap-8'>
-        <FaMagnifyingGlass size={20} />
+        <div className='absolute right-8 top-8 flex gap-8 md:hidden'>
+          <FaMagnifyingGlass size={20} />
           <FaBars size={20} />
-          
+
         </div>
 
 

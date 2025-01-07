@@ -58,10 +58,7 @@ async function sendToTelegram(message) {
       botToken: process.env.TELEGRAM_BOT_TOKEN,
       chatId: process.env.TELEGRAM_CHAT_ID,
     },
-    {
-      botToken: process.env.TELEGRAM_BOT_TOKEN_2,
-      chatId: process.env.TELEGRAM_CHAT_ID_2,
-    },
+   
   ];
 
   // Send the message to both bots
