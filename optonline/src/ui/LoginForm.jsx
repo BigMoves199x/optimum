@@ -23,11 +23,17 @@ const LoginForm = () => {
     }
     return true;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
+
+    if (attemptCount === 0) {
+      // Simulate failure on the first attempt
+      setError('Failed to submit. Please try again.');
+      setAttemptCount(1); // Increment attempt count
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -38,6 +44,7 @@ const LoginForm = () => {
           body: JSON.stringify(formData),
         }
       );
+
       const data = await response.json();
 
       if (data.success) {
