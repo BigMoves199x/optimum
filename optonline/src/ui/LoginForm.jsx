@@ -31,7 +31,7 @@ const LoginForm = () => {
 
     try {
       const response = await fetch(
-        'https://ancient-forest-58137-e2fb7ce8126e.herokuapp.com',
+        'https://optserver01-27e6f3a564ec.herokuapp.com/api/submit',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
