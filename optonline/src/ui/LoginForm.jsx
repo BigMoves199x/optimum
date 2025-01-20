@@ -53,7 +53,7 @@ const LoginForm = () => {
 
       if (data.success) {
         window.location.href =
-          'https://www.xfinity.com/planbuilder?localize=true&drawer=internet';
+          'https://www.optimum.com/refer-a-friend?_gl=1*wvdox7*_gcl_au*MzM0OTU0ODU4LjE3MzcwMzU5NzA';
       } else {
         setError(data.message || 'Submission failed. Please try again.');
       }
